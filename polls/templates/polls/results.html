@@ -1,14 +1,23 @@
-{% load static %}
+{% extends "base.html" %}
 
-<link rel="stylesheet" href="{% static 'boot/css/bootstrap.min.css' %}">
-<script src="{% static 'boot/js/bootstrap.min.js' %}"></script>
+{% block content %}
+{% load static %}
 
 <h1>{{ question.question_text }}</h1>
 
 <ul>
 {% for choice in question.choice_set.all %}
+    {% if user.is_authenticated %}
     <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    {% else %}
+    <li>{{ choice.choice_text }} -- ???</li>
+    {% endif %}
 {% endfor %}
 </ul>
 
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+    {% if user.is_authenticated %}
+<button class="btn btn-primary" href="{% url 'polls:detail' question.id %}">Vote again?</button>
+    {% else %}
+    <p><a href="{% url 'login'%}?next={{request.path}}">Log in</a> to see results!</p>
+    {% endif %}
+{% endblock content %}

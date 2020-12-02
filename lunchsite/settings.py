@@ -122,5 +122,10 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    BASE_DIR / "boot",
 ]
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/polls'
+
+# For testing without an email server
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

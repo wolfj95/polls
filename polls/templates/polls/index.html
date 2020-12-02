@@ -1,30 +1,32 @@
-{% load static %}
+{% extends "base.html" %}
 
-<link rel="stylesheet" href="{% static 'boot/css/bootstrap.min.css' %}">
-<script src="{% static 'boot/js/bootstrap.min.js' %}"></script>
+{% block content %}
 
 <div id="polls" class="container">
     {% if latest_question_list %}
     <div id="top-poll" class="row">
         <div class="col-sm-12">
-            <div class="card">
+            <a class="card stretched-link text-decoration-none text-white bg-primary" href="{% url 'polls:detail' latest_question_list.0.id %}">
                 <div class="card-body">
-                    <a href="{% url 'polls:detail' latest_question_list.0.id %}">{{ latest_question_list.0.question_text }}</a> 
+                    <h5 class="card-text">{{ latest_question_list.0.question_text }}</h5>
                 </div>
-            </div>
+                <div class="card-footer">
+                    <small class="text-white">{{ latest_question_list.0.pub_date }}</small>
+                </div>
+            </a>
         </div>
     </div>
     <div id="poll-list" class="row">
-        <div class="card-deck">
+        <div class="card-columns">
             {% for question in latest_question_list %}
             {% if forloop.first %}
             {% else %}
-            <a class="card stretched-link text-decoration-none" href="{% url 'polls:detail' question.id %}">
+            <a class="card stretched-link text-decoration-none text-white bg-secondary" href="{% url 'polls:detail' question.id %}">
                 <div class="card-body">
                     <h5 class="card-text">{{ question.question_text }}</h5>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">{{ question.pub_date }}</small>
+                    <small class="text-white">{{ question.pub_date }}</small>
                 </div>
             </a>
             {% endif %}
@@ -36,3 +38,5 @@
 <p>No polls are available.</p>
 {% endif %}
 </div>
+
+{% endblock content %}

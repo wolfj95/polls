@@ -154,3 +154,7 @@ dmypy.json
 
 # VIM
 *.swp
+*.swo
+*.swl
+
+.DS_Store
