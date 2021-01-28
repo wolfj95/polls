@@ -7,15 +7,7 @@
 
 <ul>
 {% for option in day.option_set.all %}
-    {% if user.is_authenticated %}
     <li>{{ option.letter }}: {{ option.name }} ({{option.rating_set.count}} ratings)</li>
-    {% else %}
-    <li>{{ option.letter }}: {{ serving.option.name }}: ???</li>
-    {% endif %}
 {% endfor %}
 </ul>
-
-    {% if not user.is_authenticated %}
-        <p><a href="{% url 'login'%}?next={{request.path}}">Log in</a> to see results!</p>
-    {% endif %}
 {% endblock content %}
