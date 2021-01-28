@@ -5,24 +5,55 @@ from django.utils import timezone
 
 # Create your models here.
 
-class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
+class Option(models.Model):
+    name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
-        return self.question_text
+        return self.name
 
-    def was_recently_published(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.pub_date <= now
-    was_recently_published.admin_order_field = 'pub_date'
-    was_recently_published.boolean = True
-    was_recently_published.short_description = 'Published recently?'
-
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+class Day(models.Model):
+    date = models.DateField()
+    options = models.ManyToManyField(Option, through='Serving')
 
     def __str__(self):
-        return self.choice_text
+        return f'{self.date}'
+
+class Serving(models.Model):
+    day = models.ForeignKey(Day, on_delete=models.CASCADE)
+    option = models.ForeignKey(Option, on_delete=models.CASCADE)
+    LETTER_CHOICES = [
+        ("A", 'Option A'),
+        ("B", 'Option B'),
+        ("C", 'Option C'),
+    ]
+    letter = models.CharField(
+        max_length=1,
+        choices=LETTER_CHOICES,
+        default='A',
+    )
+
+    def avg_ratings(self):
+        return self.rating_set.aggregate(
+            models.Avg('rating'),
+        )
+
+    def __str__(self):
+        return f'{self.option} on {self.day}'
+
+class Rating(models.Model):
+    serving = models.ForeignKey(Serving, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    RATING_CHOICES = [
+        (1, '⭐️'),
+        (2, '⭐️⭐️'),
+        (3, '⭐️⭐️⭐️'),
+        (4, '⭐️⭐️⭐️⭐️'),
+        (5, '⭐️⭐️⭐️⭐️⭐️'),
+    ]
+    rating = models.PositiveSmallIntegerField(
+        choices=RATING_CHOICES,
+        default=3,
+    )
+    
+    def __str__(self):
+        return f'{self.serving}'

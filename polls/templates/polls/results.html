@@ -3,21 +3,19 @@
 {% block content %}
 {% load static %}
 
-<h1>{{ question.question_text }}</h1>
+<h1>{{ day.date }}</h1>
 
 <ul>
-{% for choice in question.choice_set.all %}
+{% for serving in day.serving_set.all %}
     {% if user.is_authenticated %}
-    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    <li>{{ serving.letter }}: {{ serving.option.name }}: {{ serving.avg_ratings.rating__avg}} ⭐️ ({{serving.rating_set.count}} ratings)</li>
     {% else %}
-    <li>{{ choice.choice_text }} -- ???</li>
+    <li>{{ serving.letter }}: {{ serving.option.name }}: ???</li>
     {% endif %}
 {% endfor %}
 </ul>
 
-    {% if user.is_authenticated %}
-<button class="btn btn-primary" href="{% url 'polls:detail' question.id %}">Vote again?</button>
-    {% else %}
-    <p><a href="{% url 'login'%}?next={{request.path}}">Log in</a> to see results!</p>
+    {% if not user.is_authenticated %}
+        <p><a href="{% url 'login'%}?next={{request.path}}">Log in</a> to see results!</p>
     {% endif %}
 {% endblock content %}

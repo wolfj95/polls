@@ -1,21 +1,20 @@
 from django.contrib import admin
 
-from .models import Question, Choice
+from .models import Option, Day, Serving, Rating
 
 # Register your models here.
 
-class ChoiceInline(admin.TabularInline):
-    model = Choice
-    extra = 3
+class ServingInline(admin.TabularInline):
+    model = Serving
+    extra = 1
 
-class QuestionAdmin(admin.ModelAdmin):
+class DayAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['question_text']}),
-        ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
+        (None,               {'fields': ['date']}),
     ]
-    inlines = [ChoiceInline]
-    list_display = ('question_text', 'pub_date', 'was_recently_published')
-    list_filter = ['pub_date']
-    search_fields = ['question_text']
+    inlines = [ServingInline]
 
-admin.site.register(Question, QuestionAdmin)
+admin.site.register(Option)
+admin.site.register(Day, DayAdmin)
+admin.site.register(Serving)
+admin.site.register(Rating)

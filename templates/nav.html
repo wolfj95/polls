@@ -2,8 +2,8 @@
 
 <nav class="navbar navbar-light bg-light">
     <a class="navbar-brand" href="{% url 'polls:index' %}">
-        <img src="/docs/4.3/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-        Polls
+        <img src="{% static 'polls/images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="Lunchsite Logo">
+        How was lunch?
     </a>
     <div class="dropdown d-inline-block">
         {% if user.is_authenticated %}

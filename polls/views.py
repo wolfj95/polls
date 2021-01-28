@@ -4,45 +4,49 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 
-from .models import Choice, Question
+from .models import Day, Option, Rating
 
 # Create your views here.
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
+    context_object_name = 'latest_lunch_list'
 
     def get_queryset(self):
-        """Return the last five published questions."""
-        return Question.objects.filter(
-            pub_date__lte=timezone.now()
-        ).order_by('-pub_date')
+        """Return the 4 most recently published lunch days."""
+        return Day.objects.filter(
+            date__lte=timezone.now()
+        ).order_by('-date')[:4]
 
-class DetailView(generic.DetailView):
-    model = Question
-    template_name = 'polls/detail.html'
-    
+class PastView(generic.ListView):
+    template_name = 'polls/past.html'
+    context_object_name = 'latest_lunch_list'
+    paginate_by = 6
+    model = Day
+
     def get_queryset(self):
-        """
-        Excludes any questions that aren't published yet.
-        """
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        """Return all the published lunch days."""
+        return Day.objects.filter(
+            date__lte=timezone.now()
+        ).order_by('-date')
 
 class ResultsView(generic.DetailView):
-    model = Question
+    model = Day
     template_name = 'polls/results.html'
 
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
+def vote(request, day_id):
+    day = get_object_or_404(Day, pk=day_id)
     try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
+        selected_option = day.options.get(pk=request.POST['option'])
+        serving = selected_option.serving_set.get(day=day)
+        rating_num = request.POST['rating']
+    except (KeyError, Option.DoesNotExist):
         return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "Your didn't select a choice.",
+            'option': option,
+            'error_message': "You didn't select an option or rating.",
         })
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        rating_obj = Rating.objects.create(serving=serving, rating=rating_num)
+        rating_obj.save()
+        return HttpResponseRedirect(reverse('polls:results', args=(day.id,)))
 
