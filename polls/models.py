@@ -27,11 +27,6 @@ class Option(models.Model):
     def __str__(self):
         return f'{self.name} ({self.day})'
 
-    def avg_ratings(self):
-        return self.rating_set.aggregate(
-            models.Avg('rating'),
-        )
-
 class Rating(models.Model):
     option = models.ForeignKey(Option, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
