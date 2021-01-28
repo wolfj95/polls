@@ -37,8 +37,7 @@ class ResultsView(generic.DetailView):
 def vote(request, day_id):
     day = get_object_or_404(Day, pk=day_id)
     try:
-        selected_option = day.options.get(pk=request.POST['option'])
-        serving = selected_option.serving_set.get(day=day)
+        selected_option = day.option_set.get(pk=request.POST['option'])
         rating_num = request.POST['rating']
     except (KeyError, Option.DoesNotExist):
         return render(request, 'polls/detail.html', {
@@ -46,7 +45,7 @@ def vote(request, day_id):
             'error_message': "You didn't select an option or rating.",
         })
     else:
-        rating_obj = Rating.objects.create(serving=serving, rating=rating_num)
+        rating_obj = Rating.objects.create(option=selected_option, rating=rating_num)
         rating_obj.save()
         return HttpResponseRedirect(reverse('polls:results', args=(day.id,)))
 

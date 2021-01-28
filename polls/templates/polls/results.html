@@ -6,11 +6,11 @@
 <h1>{{ day.date }}</h1>
 
 <ul>
-{% for serving in day.serving_set.all %}
+{% for option in day.option_set.all %}
     {% if user.is_authenticated %}
-    <li>{{ serving.letter }}: {{ serving.option.name }}: {{ serving.avg_ratings.rating__avg}} ⭐️ ({{serving.rating_set.count}} ratings)</li>
+    <li>{{ option.letter }}: {{ option.name }}: {{ option.avg_ratings.rating__avg}} ⭐️ ({{option.rating_set.count}} ratings)</li>
     {% else %}
-    <li>{{ serving.letter }}: {{ serving.option.name }}: ???</li>
+    <li>{{ option.letter }}: {{ serving.option.name }}: ???</li>
     {% endif %}
 {% endfor %}
 </ul>

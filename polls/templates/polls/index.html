@@ -10,57 +10,45 @@
             <div class="card text-white bg-primary" >
                 <div class="card-body">
                     <h5 class="card-text">{{ latest_lunch_list.0.date }}</h5>
-                    {% if latest_lunch_list.0.curr_user_has_voted %}
-                        <ul>
-                        {% for serving in day.serving_set.all %}
-                            {% if user.is_authenticated %}
-                            <li>{{ serving.letter }}: {{ serving.option.name }}: {{ serving.avg_ratings.rating__avg}} ⭐️ ({{serving.rating_set.count}} ratings)</li>
-                            {% else %}
-                            <li>{{ serving.letter }}: {{ serving.option.name }}: ???</li>
-                            {% endif %}
-                        {% endfor %}
-                        </ul>
-                    {% else %}
-                        <form action ="{% url 'polls:vote' latest_lunch_list.0.id %}" method="post">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <h6> What lunch option did you have?</h6>
-                                {% for serving in latest_lunch_list.0.serving_set.all %}
-                                <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ serving.option.id }}">
-                                <label for="option{{ forloop.counter }}">{{ serving.letter }}: {{ serving.option.name }}</label><br>
-                                {% endfor %}
+                    <form action ="{% url 'polls:vote' latest_lunch_list.0.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <h6> What lunch option did you have?</h6>
+                            {% for option in latest_lunch_list.0.option_set.all %}
+                            <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+                            <label for="option{{ forloop.counter }}">{{ option.letter }}: {{ option.name }}</label><br>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <h6>How was it?</h6>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="rating" id="rating1" value="1">
+                              <label class="form-check-label" for="rating1">⭐️</label>
                             </div>
-                            <div class="form-group">
-                                <h6>How was it?</h6>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" name="rating" id="rating1" value="1">
-                                  <label class="form-check-label" for="rating1">⭐️</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" name="rating" id="rating2" value="2">
-                                  <label class="form-check-label" for="rating2">⭐️⭐️</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" name="rating" id="rating3" value="3">
-                                  <label class="form-check-label" for="rating3">⭐️⭐️⭐️</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" name="rating" id="rating4" value="4">
-                                  <label class="form-check-label" for="rating4">⭐️⭐️⭐️⭐️</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" name="rating" id="rating5" value="5">
-                                  <label class="form-check-label" for="rating5">⭐️⭐️⭐️⭐️⭐️</label>
-                                </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="rating" id="rating2" value="2">
+                              <label class="form-check-label" for="rating2">⭐️⭐️</label>
                             </div>
-                            {% if user.is_authenticated %}
-                            <button class="btn btn-light" type="submit">Vote</button>
-                            {% else %}
-                            <button class="btn btn-light" type="submit" disabled>Vote</button>
-                            <p><a href="{% url 'login'%}?next={{request.path}}" class="text-white">Log in</a> to vote!</p>
-                            {% endif %}
-                        </form>
-                    {% endif %}
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="rating" id="rating3" value="3">
+                              <label class="form-check-label" for="rating3">⭐️⭐️⭐️</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="rating" id="rating4" value="4">
+                              <label class="form-check-label" for="rating4">⭐️⭐️⭐️⭐️</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="rating" id="rating5" value="5">
+                              <label class="form-check-label" for="rating5">⭐️⭐️⭐️⭐️⭐️</label>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <button class="btn btn-light" type="submit">Vote</button>
+                        {% else %}
+                        <button class="btn btn-light" type="submit" disabled>Vote</button>
+                        <p><a href="{% url 'login'%}?next={{request.path}}" class="text-white">Log in</a> to vote!</p>
+                        {% endif %}
+                    </form>
                 </div>
                 <div class="card-footer">
                     <small class="text-white">{{ latest_lunch_list.0.date }}</small>

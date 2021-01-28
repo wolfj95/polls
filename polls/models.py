@@ -4,27 +4,19 @@ from django.db import models
 from django.utils import timezone
 
 # Create your models here.
-
-class Option(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-
-    def __str__(self):
-        return self.name
-
 class Day(models.Model):
     date = models.DateField()
-    options = models.ManyToManyField(Option, through='Serving')
 
     def __str__(self):
         return f'{self.date}'
 
-class Serving(models.Model):
+class Option(models.Model):
+    name = models.CharField(max_length=200, unique=True)
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
-    option = models.ForeignKey(Option, on_delete=models.CASCADE)
     LETTER_CHOICES = [
-        ("A", 'Option A'),
-        ("B", 'Option B'),
-        ("C", 'Option C'),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('C', 'C'),
     ]
     letter = models.CharField(
         max_length=1,
@@ -32,16 +24,16 @@ class Serving(models.Model):
         default='A',
     )
 
+    def __str__(self):
+        return f'{self.name} ({self.day})'
+
     def avg_ratings(self):
         return self.rating_set.aggregate(
             models.Avg('rating'),
         )
 
-    def __str__(self):
-        return f'{self.option} on {self.day}'
-
 class Rating(models.Model):
-    serving = models.ForeignKey(Serving, on_delete=models.CASCADE)
+    option = models.ForeignKey(Option, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     RATING_CHOICES = [
         (1, '⭐️'),
@@ -56,4 +48,5 @@ class Rating(models.Model):
     )
     
     def __str__(self):
-        return f'{self.serving}'
+        return f'{self.option} ({self.timestamp})'
+
